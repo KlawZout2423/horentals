@@ -14,25 +14,35 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_secure_storage: ^9.0.0
   image_picker: ^1.0.4
+  file_picker: ^10.3.6  # ✅ Good! Already have this
   flutter_iconpicker: ^3.1.0
-  carousel_slider: ^4.2.1  # Add this for better image galleries
+  carousel_slider: ^4.2.1
   url_launcher: ^6.1.11
-  path_provider: ^2.1.1       # For getting local file paths
-  hive: ^2.2.3                # For local database (optional but recommended)
+  path_provider: ^2.1.1
+  hive: ^2.2.3
   hive_flutter: ^1.1.0
   graphql_flutter: ^5.1.0
   http: ^1.1.0
-  dio: ^5.3.0
-
+  http_parser: ^4.0.2  # For multipart file uploads
+  mime: ^1.0.4          # For detecting file MIME types
+  cached_network_image: ^3.2.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+  image_path_ios: "assets/logo.png"
 
 flutter:
   uses-material-design: true
 
   assets:
     - assets/logo.jpg
+    - assets/logo.png
     - assets/splash_image.jpg
