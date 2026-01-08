@@ -129,6 +129,251 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
+  void _showPrivacyPolicy() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.cardColor(context),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.security_rounded,
+                color: Colors.green,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Privacy Policy',
+              style: TextStyle(
+                fontSize: responsiveFontSize(context, 20),
+                fontWeight: FontWeight.w700,
+                color: AppTheme.textColor(context),
+              ),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: Scrollbar(
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildPolicySection('Last Updated', 'December 2024'),
+                  const SizedBox(height: 16),
+
+                  _buildPolicySection('1. Information We Collect',
+                      'We collect personal and non-personal information to provide and improve our services:\n\n'
+                          '• Account Information: Name, email, phone number\n'
+                          '• Property Information: Property details, photos, descriptions\n'
+                          '• Payment Information: Billing details, transaction history\n'
+                          '• Usage Data: How you use our app, features accessed\n'
+                          '• Device Information: Device type, operating system, IP address\n'
+                          '• Location Data: Approximate location for property recommendations'
+                  ),
+
+                  _buildPolicySection('2. How We Use Your Information',
+                      'We use your information to:\n\n'
+                          '• Provide and maintain our services\n'
+                          '• Facilitate property sales, rentals, and management\n'
+                          '• Verify user identities and prevent fraud\n'
+                          '• Communicate about your account and transactions\n'
+                          '• Personalize your experience\n'
+                          '• Process payments securely\n'
+                          '• Comply with legal obligations'
+                  ),
+
+                  _buildPolicySection('3. Data Security',
+                      'We use industry-standard security measures to protect your personal information, including encryption and secure servers. However, no system is completely secure, and we cannot guarantee absolute security.'
+                  ),
+
+                  _buildPolicySection('4. Your Privacy Rights',
+                      'You have the right to:\n\n'
+                          '• Access and receive a copy of your personal information\n'
+                          '• Correct or update inaccurate information\n'
+                          '• Request deletion of your data\n'
+                          '• Withdraw consent for certain processing activities'
+                  ),
+
+                  _buildPolicySection('5. Contact Us',
+                      'If you have any questions about this Privacy Policy, please contact us at:\n\n'
+                          'Ho Rentals\n'
+                          'Email: thehorentals@gmail.com\n'
+                          'Phone: 0557922593, 0595744526, 0599682185\n'
+                          'Address: Ho, Ghana'
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showTermsAndConditions() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.cardColor(context),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.description_rounded,
+                color: Colors.orange,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Terms & Conditions',
+              style: TextStyle(
+                fontSize: responsiveFontSize(context, 20),
+                fontWeight: FontWeight.w700,
+                color: AppTheme.textColor(context),
+              ),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: Scrollbar(
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildPolicySection('Last Updated', 'December 2024'),
+                  const SizedBox(height: 16),
+
+                  _buildPolicySection('1. About Ho Rentals',
+                      'Ho Rentals provides an online platform that connects property owners, buyers, and renters for property sales, rentals, and management. We act as a middleman and property manager to ensure smooth and trustworthy transactions.'
+                  ),
+
+                  _buildPolicySection('2. Eligibility',
+                      'To use our Services, you must:\n\n'
+                          '• Be at least 18 years old\n'
+                          '• Have legal capacity to enter into agreements\n'
+                          '• Provide accurate and truthful information'
+                  ),
+
+                  _buildPolicySection('3. Account Registration',
+                      '• You must create an account to access most features\n'
+                          '• You are responsible for maintaining account security\n'
+                          '• Notify us immediately of unauthorized access\n'
+                          '• We reserve the right to suspend accounts for misuse'
+                  ),
+
+                  _buildPolicySection('4. Our Role',
+                      'Ho Rentals serves as an intermediary between property owners and clients. We facilitate property listings, inquiries, and management, but we do not own or control the properties listed unless stated otherwise.'
+                  ),
+
+                  _buildPolicySection('5. Property Listings',
+                      'If you list a property:\n\n'
+                          '• Ensure all information is accurate and up-to-date\n'
+                          '• Confirm you have legal right to list the property\n'
+                          '• Ho Rentals is not liable for false or misleading listings'
+                  ),
+
+                  _buildPolicySection('6. Payments and Fees',
+                      '• Some features may require payment\n'
+                          '• All payments through approved methods\n'
+                          '• Provide accurate billing information\n'
+                          '• Fees are generally non-refundable'
+                  ),
+
+                  _buildPolicySection('7. Prohibited Activities',
+                      'You agree not to:\n\n'
+                          '• Use the app for unlawful activities\n'
+                          '• Post false or offensive content\n'
+                          '• Impersonate others\n'
+                          '• Circumvent payment systems\n'
+                          '• Disrupt app functionality'
+                  ),
+
+                  _buildPolicySection('8. Limitation of Liability',
+                      'Ho Rentals and its affiliates are not liable for indirect, incidental, or consequential damages. We make no warranties regarding accuracy, availability, or reliability of property listings.'
+                  ),
+
+                  _buildPolicySection('9. Contact Information',
+                      'Ho Rentals\n'
+                          'Email: thehorentals@gmail.com\n'
+                          'Phone: 0557922593, 0595744526, 0599682185\n'
+                          'Address: Ho, Ghana'
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPolicySection(String title, String content) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: responsiveFontSize(context, 16),
+              fontWeight: FontWeight.w700,
+              color: AppTheme.textColor(context),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            content,
+            style: TextStyle(
+              fontSize: responsiveFontSize(context, 14),
+              color: AppTheme.textSecondaryColor(context),
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -176,8 +421,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Widget _buildLogo() {
     return Container(
-      width: 80,
-      height: 80,
+      width: 100,
+      height: 100,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(25),
@@ -186,7 +431,7 @@ class _SignupScreenState extends State<SignupScreen> {
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => Container(
             color: AppTheme.primaryRed,
-            child: Center(
+            child: const Center(
               child: Text('LOGO', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ),
@@ -301,12 +546,12 @@ class _SignupScreenState extends State<SignupScreen> {
             children: [
               Text("I agree to the ", style: TextStyle(color: AppTheme.textSecondaryColor(context))),
               GestureDetector(
-                  onTap: () => _showSnackBar('Terms & Conditions coming soon'),
-                  child: Text("Terms & Conditions", style: TextStyle(color: AppTheme.primaryRed))),
+                  onTap: _showTermsAndConditions,
+                  child: const Text("Terms & Conditions", style: TextStyle(color: AppTheme.primaryRed))),
               Text(" and ", style: TextStyle(color: AppTheme.textSecondaryColor(context))),
               GestureDetector(
-                  onTap: () => _showSnackBar('Privacy Policy coming soon'),
-                  child: Text("Privacy Policy", style: TextStyle(color: AppTheme.primaryRed))),
+                  onTap: _showPrivacyPolicy,
+                  child: const Text("Privacy Policy", style: TextStyle(color: AppTheme.primaryRed))),
             ],
           ),
         ),
@@ -322,11 +567,16 @@ class _SignupScreenState extends State<SignupScreen> {
         onPressed: _isLoading ? null : _signUp,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryRed,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          foregroundColor: Colors.white,
+          elevation: 2,
+          shadowColor: AppTheme.primaryRed.withOpacity(0.3),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         child: _isLoading
             ? const CircularProgressIndicator(color: Colors.white)
-            : const Text("CREATE ACCOUNT", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+            : const Text("CREATE ACCOUNT", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
       ),
     );
   }
@@ -338,7 +588,7 @@ class _SignupScreenState extends State<SignupScreen> {
         Text("Already have an account? ", style: TextStyle(color: AppTheme.textSecondaryColor(context))),
         GestureDetector(
           onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen())),
-          child: Text("Sign In", style: TextStyle(color: AppTheme.primaryRed, fontWeight: FontWeight.w700)),
+          child: const Text("Sign In", style: TextStyle(color: AppTheme.primaryRed, fontWeight: FontWeight.w700)),
         ),
       ],
     );

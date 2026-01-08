@@ -117,7 +117,6 @@ class GraphQLService {
     if (useRailwayInDev) {
       return 'https://ho-rentals-backend-production.up.railway.app';
     } else {
-      // Only use localhost if you're actually running backend locally
       if (kIsWeb) {
         return 'http://localhost:4000';
       } else if (Platform.isAndroid) {

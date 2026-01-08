@@ -82,41 +82,28 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    print('🔐 Login attempt with phone: $phone');
-
     try {
       final emailForBackend = '$phone@horentals.com';
-      print('📱 Using email for login: $emailForBackend');
-      print('🔑 Using password: ${'*' * password.length}');
-
       final result = await GraphQLService.login(emailForBackend, password);
-
-
 
       if (result['token'] != null && result['user'] != null) {
         final userRole = result['user']['role']?.toString().toLowerCase() ?? 'user';
         final userName = result['user']['name'] ?? 'User';
-
-
 
         _showSnackBar('Welcome back, $userName!');
 
         if (!mounted) return;
 
         if (userRole == 'admin') {
-          print('🚀 Navigating to admin dashboard - User is ADMIN');
           Navigator.pushReplacementNamed(context, '/admin');
         } else {
-          print('🚀 Navigating to user home - User is REGULAR USER');
           Navigator.pushReplacementNamed(context, '/home');
         }
       } else {
-        print('❌ Login failed: No token or user data received');
         _showSnackBar('Login failed. Please check your phone number and password.', isError: true);
       }
 
     } catch (e) {
-
       if (e.toString().contains('Invalid credentials')) {
         _showSnackBar('Invalid phone number or password', isError: true);
       } else if (e.toString().contains('timeout')) {
@@ -138,12 +125,6 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
     }
-  }
-
-  void _quickLogin(String phone, String password, String userType) {
-    _phoneController.text = phone;
-    _passwordController.text = password;
-    _showSnackBar('$userType credentials loaded. Tap SIGN IN.');
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
@@ -448,19 +429,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Quick Login Buttons for Testing
-                      Column(
-                        children: [
-                          // Admin User
-
-                          // Regular User
-
-
-                        ],
                       ),
                     ],
                   ),

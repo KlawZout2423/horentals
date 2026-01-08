@@ -31,7 +31,7 @@ EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, do
 class GalleryScreen extends StatelessWidget {
   final Property property;
 
-  const GalleryScreen({required this.property});
+  const GalleryScreen({super.key, required this.property});
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class FullScreenImageViewer extends StatefulWidget {
   final List<String> imageUrls;
   final int initialIndex;
 
-  const FullScreenImageViewer({required this.imageUrls, this.initialIndex = 0});
+  const FullScreenImageViewer({super.key, required this.imageUrls, this.initialIndex = 0});
 
   @override
   _FullScreenImageViewerState createState() => _FullScreenImageViewerState();

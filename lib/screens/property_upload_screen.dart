@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -41,11 +40,11 @@ class _PropertyUploadScreenState extends State<PropertyUploadScreen> {
   // State variables
   String _selectedType = 'Student Hostel';
   String _selectedStatus = 'available';
-  List<PlatformFile> _selectedWebFiles = []; // For web uploads (before upload)
-  List<File> _selectedImageFiles = [];        // For mobile uploads (before upload)
+  final List<PlatformFile> _selectedWebFiles = []; // For web uploads (before upload)
+  final List<File> _selectedImageFiles = [];        // For mobile uploads (before upload)
   List<String> _uploadedImageUrls = [];       // Already uploaded images
   bool _isUploading = false;
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   // Property types
   final List<String> _propertyTypes = [
@@ -566,7 +565,7 @@ class _PropertyUploadScreenState extends State<PropertyUploadScreen> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('✅ All systems ready!'), backgroundColor: Colors.green),
+        const SnackBar(content: Text('✅ All systems ready!'), backgroundColor: Colors.green),
       );
     } catch (e) {
       print('❌ Debug test failed: $e');
@@ -721,7 +720,7 @@ class _PropertyUploadScreenState extends State<PropertyUploadScreen> {
                 child: Column(
                   children: [
                     DropdownButtonFormField<String>(
-                      value: _selectedType,
+                      initialValue: _selectedType,
                       decoration: const InputDecoration(
                         labelText: 'Property Type *',
                         border: OutlineInputBorder(),
@@ -747,7 +746,7 @@ class _PropertyUploadScreenState extends State<PropertyUploadScreen> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: _selectedStatus,
+                      initialValue: _selectedStatus,
                       decoration: const InputDecoration(
                         labelText: 'Status *',
                         border: OutlineInputBorder(),
@@ -941,8 +940,8 @@ class _PropertyUploadScreenState extends State<PropertyUploadScreen> {
                                 print('❌ Flutter upload failed: $e');
                               }
                             },
-                            child: const Text('Test Flutter Upload'),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.teal,),
+                            child: const Text('Test Flutter Upload'),
                           ),
                         ],
                       ),

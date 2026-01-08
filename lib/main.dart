@@ -62,11 +62,11 @@ class _MyAppState extends State<MyApp> {
         initialRoute: '/splash',
         routes: {
           '/splash': (context) => const SplashScreen(),
-          '/login': (context) => const LoginScreen(), // Remove const
-          '/signup': (context) => const SignupScreen(), // Remove const
-          '/admin': (context) => const AdminDashboard(), // Remove const
+          '/login': (context) => const LoginScreen(),
+          '/signup': (context) => const SignupScreen(),
+          '/admin': (context) => const AdminDashboard(),
           '/admin/properties': (context) => const PropertyManagement(),
-          '/admin/upload': (context) => const PropertyUploadScreen(), // Remove const
+          '/admin/upload': (context) => const PropertyUploadScreen(),
           '/property/details': (context) {
             final property = ModalRoute.of(context)!.settings.arguments as Property;
             return PropertyDetailsScreen(property: property);
@@ -80,15 +80,9 @@ class _MyAppState extends State<MyApp> {
                 builder: (context) => HomeScreen(toggleTheme: _toggleTheme),
               );
             case '/chat':
-            // You need to pass arguments when navigating to this screen
-              final args = settings.arguments as Map<String, dynamic>? ?? {};
-
+              // Since chat is a placeholder, no arguments are needed.
               return MaterialPageRoute(
-                builder: (context) => ChatScreen(
-                  propertyId: args['propertyId'] ?? 'default-id', // Provide a default or handle error
-                  propertyTitle: args['propertyTitle'] ?? 'Property Chat',
-                  ownerId: args['ownerId'] ?? 'default-owner-id',
-                ),
+                builder: (context) => ChatScreen(),
               );
             case '/profile':
               return MaterialPageRoute(
