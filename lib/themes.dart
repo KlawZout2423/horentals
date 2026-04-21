@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Light Mode Colors
-  static const Color primaryRed = Color(0xFFE53E3E);
-  static const Color redLight = Color(0xFFFED7D7);
-  static const Color redDark = Color(0xFFC53030);
+  static const Color primaryRed = Color(0xFFC1121F);
+  static const Color redLight = Color(0xFFFFF3F3);
+  static const Color redDark = Color(0xFF780B13);
   static const Color gold = Color(0xFFD69E2E);
   static const Color goldLight = Color(0xFFFAF3E3);
 
@@ -15,7 +15,7 @@ class AppTheme {
   static const Color lightTextSecondary = Color(0xFF4A5568);
 
   // Dark Mode Colors
-  static const Color darkBackground = Color(0xFF1A202C);
+  static const Color darkBackground = Color(0xFF1E1E1E);
   static const Color darkCard = Color(0xFF2D3748);
   static const Color darkText = Color(0xFFFFFFFF);
   static const Color darkTextSecondary = Color(0xFFE2E8F0);
