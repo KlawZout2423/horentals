@@ -379,23 +379,28 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor(context),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: responsivePadding(context),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              _buildBackButton(context),
-              const SizedBox(height: 20),
-              _buildLogo(),
-              const SizedBox(height: 20),
-              _buildHeader(context),
-              const SizedBox(height: 32),
-              _buildForm(context),
-              const SizedBox(height: 32),
-              _buildLoginLink(context),
-              const SizedBox(height: 40),
-            ],
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: SingleChildScrollView(
+              padding: responsivePadding(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  _buildBackButton(context),
+                  const SizedBox(height: 20),
+                  _buildLogo(),
+                  const SizedBox(height: 20),
+                  _buildHeader(context),
+                  const SizedBox(height: 32),
+                  _buildForm(context),
+                  const SizedBox(height: 32),
+                  _buildLoginLink(context),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -427,7 +432,7 @@ class _SignupScreenState extends State<SignupScreen> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(25),
         child: Image.asset(
-          'assets/logo.jpg',
+          'assets/logo.png',
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => Container(
             color: AppTheme.primaryRed,

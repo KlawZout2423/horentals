@@ -61,7 +61,7 @@ class _SavedPropertiesScreenState extends State<SavedPropertiesScreen> {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
+          constraints: const BoxConstraints(maxWidth: 1000),
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : _savedProperties.isEmpty

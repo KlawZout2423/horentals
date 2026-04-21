@@ -744,10 +744,13 @@ class _PropertyManagementState extends State<PropertyManagement> {
   Widget build(BuildContext context) {
     final filteredProperties = _filterProperties();
 
-    return RefreshIndicator(
-        onRefresh: _fetchProperties,
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1000),
+        child: RefreshIndicator(
+            onRefresh: _fetchProperties,
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
             : Column(
           children: [
             // Filter Section - only show when not filtered by AdminDashboard
@@ -835,6 +838,8 @@ class _PropertyManagementState extends State<PropertyManagement> {
             Expanded(child: _buildPropertyList(filteredProperties)),
           ],
         ),
-      );
+      ),
+    ),
+    );
   }
 }

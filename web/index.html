@@ -29,10 +29,72 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>untitled</title>
+  <title>HO Rentals - Find Your Perfect Home</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    .loading {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .loader {
+      border: 6px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 6px solid #E53935;
+      width: 50px;
+      height: 50px;
+      -webkit-animation: spin 1s linear infinite;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    @-webkit-keyframes spin {
+      0% { -webkit-transform: rotate(0deg); }
+      100% { -webkit-transform: rotate(360deg); }
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .logo-loading {
+      width: 100px;
+      height: 100px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
-<body>
-  <script src="flutter_bootstrap.js" async></script>
+<body style="background-color: #F8F9FA;">
+  <div class="loading" id="loading-indicator">
+    <img src="logo.png" class="logo-loading" alt="HO Rentals Logo">
+    <div class="loader"></div>
+    <div style="color: #444; font-weight: 500; font-size: 18px;">HO Rentals</div>
+    <div style="color: #888; font-size: 14px; margin-top: 5px;">Modern Real Estate Management</div>
+  </div>
+  <script>
+    window.addEventListener('load', function(ev) {
+      // Wait for engine to be ready
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          fingerprint: true,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            // Hide loading indicator
+            document.getElementById('loading-indicator').style.display = 'none';
+            appRunner.runApp();
+          });
+        }
+      });
+    });
+  </script>
 </body>
 </html>
