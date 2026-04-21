@@ -3,30 +3,12 @@ import '../models/property_model.dart';
 import '../themes.dart';
 import 'property_upload_screen.dart';
 import '../services/graphql_service.dart';
+import '../utils/responsive.dart';
 
-// Helper function to calculate responsive font size
-double responsiveFontSize(BuildContext context, double baseFontSize) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  // Adjust the base font size based on the screen width
-  if (screenWidth < 360) {
-    return baseFontSize * 0.8;
-  } else if (screenWidth < 400) {
-    return baseFontSize * 0.9;
-  }
-  return baseFontSize;
-}
 
-// Helper function to calculate responsive padding
-EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  // Adjust horizontal padding based on screen width
-  if (screenWidth < 360) {
-    return EdgeInsets.symmetric(horizontal: horizontal * 0.8, vertical: vertical);
-  } else if (screenWidth < 400) {
-    return EdgeInsets.symmetric(horizontal: horizontal * 0.9, vertical: vertical);
-  }
-  return EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical);
-}
+// Helper functions delegated to AppTheme
+double responsiveFontSize(BuildContext context, double baseFontSize) => AppTheme.responsiveFontSize(context, baseFontSize);
+EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) => AppTheme.responsivePadding(context, horizontal: horizontal, vertical: vertical);
 
 class GalleryScreen extends StatelessWidget {
   final Property property;
@@ -734,6 +716,20 @@ class _PropertyManagementState extends State<PropertyManagement> {
             ),
           ],
         ),
+      );
+    }
+
+    if (Responsive.isDesktop(context) || Responsive.isTablet(context)) {
+      return GridView.builder(
+        padding: responsivePadding(context, horizontal: 16, vertical: 16),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: Responsive.isDesktop(context) ? 3 : 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 0.75, // Adjusted for card content
+        ),
+        itemCount: properties.length,
+        itemBuilder: (_, i) => _buildPropertyCard(context, properties[i]),
       );
     }
 

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '/models/property_model.dart';
-import '/services/graphql_service.dart';
+import '../models/property_model.dart';
+import '../services/graphql_service.dart';
 import '../themes.dart';
 import 'property_upload_screen.dart';
+import '../utils/responsive.dart';
 import 'dart:developer';
 
 class PropertyListScreen extends StatefulWidget {

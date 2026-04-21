@@ -62,6 +62,27 @@ class AppTheme {
         : lightTextSecondary;
   }
 
+  // Responsive Helpers
+  static double responsiveFontSize(BuildContext context, double baseFontSize) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth < 360) {
+      return baseFontSize * 0.8;
+    } else if (screenWidth < 400) {
+      return baseFontSize * 0.9;
+    }
+    return baseFontSize;
+  }
+
+  static EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth < 360) {
+      return EdgeInsets.symmetric(horizontal: horizontal * 0.8, vertical: vertical);
+    } else if (screenWidth < 400) {
+      return EdgeInsets.symmetric(horizontal: horizontal * 0.9, vertical: vertical);
+    }
+    return EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical);
+  }
+
   // Light Theme
   static ThemeData get lightTheme {
     return ThemeData(

@@ -539,7 +539,7 @@ class _SignupScreenState extends State<SignupScreen> {
         Checkbox(
           value: _acceptTerms,
           onChanged: (v) => setState(() => _acceptTerms = v!),
-          fillColor: MaterialStateProperty.all(AppTheme.primaryRed),
+          fillColor: WidgetStateProperty.all(AppTheme.primaryRed),
         ),
         Expanded(
           child: Wrap(

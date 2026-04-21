@@ -8,28 +8,14 @@ import '../models/property_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import '../utils/logger.dart';
+import '../utils/responsive.dart';
 
-// Helper function to calculate responsive font size
-double responsiveFontSize(BuildContext context, double baseFontSize) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  if (screenWidth < 360) {
-    return baseFontSize * 0.8;
-  } else if (screenWidth < 400) {
-    return baseFontSize * 0.9;
-  }
-  return baseFontSize;
-}
 
-// Helper function to calculate responsive padding
-EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  if (screenWidth < 360) {
-    return EdgeInsets.symmetric(horizontal: horizontal * 0.8, vertical: vertical);
-  } else if (screenWidth < 400) {
-    return EdgeInsets.symmetric(horizontal: horizontal * 0.9, vertical: vertical);
-  }
-  return EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical);
-}
+
+// Helper functions delegated to AppTheme
+double responsiveFontSize(BuildContext context, double baseFontSize) => AppTheme.responsiveFontSize(context, baseFontSize);
+EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) => AppTheme.responsivePadding(context, horizontal: horizontal, vertical: vertical);
 
 class HomeScreen extends StatefulWidget {
   final Function(bool) toggleTheme;
@@ -85,9 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Map<String, dynamic>> _selfContainedOptions = [
     {'label': 'Single Room SC', 'icon': Icons.single_bed_rounded, 'type': 'Single Room SC'},
     {'label': 'Chamber and Hall SC', 'icon': Icons.meeting_room_rounded, 'type': 'Chamber and Hall SC'},
-    {'label': '2 Bedroom SC', 'icon': Icons.bed_rounded, 'type': '2 Bedroom SC'},
-    {'label': '3 Bedroom SC', 'icon': Icons.bed_rounded, 'type': '3 Bedroom SC'},
-    {'label': '4 Bedroom SC', 'icon': Icons.bed_rounded, 'type': '4 Bedroom SC'},
+    {'label': 'Two Bedroom SC', 'icon': Icons.bed_rounded, 'type': 'Two Bedroom SC'},
+    {'label': 'Three Bedroom SC', 'icon': Icons.bed_rounded, 'type': 'Three Bedroom SC'},
+    {'label': 'Four Bedroom SC', 'icon': Icons.bed_rounded, 'type': 'Four Bedroom SC'},
   ];
 
   // ---------- LIFECYCLE ----------
@@ -113,10 +99,10 @@ class _HomeScreenState extends State<HomeScreen> {
       final data = await _storage.read(key: 'user_data');
       if (data != null && mounted) {
         setState(() => _currentUser = json.decode(data));
-        print('👤 Loaded user data: ${_currentUser?['name']}');
+        AppLogger.info('👤 Loaded user data: ${_currentUser?['name']}');
       }
     } catch (e) {
-      print('❌ Error loading user data: $e');
+      AppLogger.error('❌ Error loading user data: $e');
     }
   }
 
@@ -140,9 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      print('🔄 Fetching properties from GraphQL...');
+      AppLogger.info('🔄 Fetching properties from GraphQL...');
       final propertiesData = await GraphQLService.getProperties();
-      print('✅ Received ${propertiesData.length} properties from backend');
+      AppLogger.info('✅ Received ${propertiesData.length} properties from backend');
 
       final List<Property> properties = [];
 
@@ -151,64 +137,26 @@ class _HomeScreenState extends State<HomeScreen> {
           final property = Property.fromJson(propertyData);
           properties.add(property);
         } catch (e, stackTrace) {
-          print('❌ Error parsing property: $e');
-          print('   Stack trace: $stackTrace');
+          AppLogger.error('❌ Error parsing property: $e');
+          AppLogger.error('   Stack trace: $stackTrace');
         }
       }
-      try {
-        print('🔄 Fetching properties from GraphQL...');
-        final propertiesData = await GraphQLService.getProperties();
-        print('✅ Received ${propertiesData.length} properties from backend');
 
-        final List<Property> properties = [];
+      // 🚨 MOVE DEBUG CODE HERE - AFTER ALL PROPERTIES ARE PARSED
+      AppLogger.debug('🔍 CHECKING IMAGE URLS:');
+      AppLogger.debug('📊 Total properties parsed: ${properties.length}');
 
-        for (var propertyData in propertiesData) {
-          try {
-            final property = Property.fromJson(propertyData);
-            properties.add(property);
-          } catch (e, stackTrace) {
-            print('❌ Error parsing property: $e');
-            print('   Stack trace: $stackTrace');
-          }
-        }
-
-        // 🚨 MOVE DEBUG CODE HERE - AFTER ALL PROPERTIES ARE PARSED
-        print('🔍 CHECKING IMAGE URLS:');
-        print('📊 Total properties parsed: ${properties.length}');
-
-        for (var property in properties) {
-          print('   =================================');
-          print('   Property: ${property.title}');
-          print('   Type: ${property.type}');
-          print('   displayImage: ${property.displayImage}');
-          print('   Has images: ${property.hasImages}');
-          print('   All URLs: ${property.allImageUrls}');
-          print('   Gallery items: ${property.gallery?.length ?? 0}');
-          print('   ImageUrl: ${property.imageUrl}');
-          print('   Images array: ${property.images.length}');
-          print('   =================================');
-        }
-
-        setState(() {
-          _allProperties = properties;
-          _isLoading = false;
-        });
-
-        _applyFilters();
-
-        print('🎯 Total properties loaded: ${_allProperties.length}');
-        if (properties.isNotEmpty) {
-          print('📊 Sample property: ${properties.first.title} - ${properties.first.type} - ${properties.first.images.length} images');
-        }
-
-      } catch (e) {
-        print('❌ Error fetching properties: $e');
-        setState(() {
-          _error = e.toString();
-          _isLoading = false;
-          _allProperties = [];
-          _filteredProperties = [];
-        });
+      for (var property in properties) {
+        AppLogger.debug('   =================================');
+        AppLogger.debug('   Property: ${property.title}');
+        AppLogger.debug('   Type: ${property.type}');
+        AppLogger.debug('   displayImage: ${property.displayImage}');
+        AppLogger.debug('   Has images: ${property.hasImages}');
+        AppLogger.debug('   All URLs: ${property.allImageUrls}');
+        AppLogger.debug('   Gallery items: ${property.gallery?.length ?? 0}');
+        AppLogger.debug('   ImageUrl: ${property.imageUrl}');
+        AppLogger.debug('   Images array: ${property.images.length}');
+        AppLogger.debug('   =================================');
       }
 
       setState(() {
@@ -218,13 +166,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
       _applyFilters();
 
-      print('🎯 Total properties loaded: ${_allProperties.length}');
+      AppLogger.info('🎯 Total properties loaded: ${_allProperties.length}');
       if (properties.isNotEmpty) {
-        print('📊 Sample property: ${properties.first.title} - ${properties.first.type} - ${properties.first.images.length} images');
+        AppLogger.info('📊 Sample property: ${properties.first.title} - ${properties.first.type} - ${properties.first.images.length} images');
       }
 
     } catch (e) {
-      print('❌ Error fetching properties: $e');
+      AppLogger.error('❌ Error fetching properties: $e');
       setState(() {
         _error = e.toString();
         _isLoading = false;
@@ -257,7 +205,10 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       } else if (_activeTypeFilter != 'All') {
         if (_activeTypeFilter == 'self-contained') {
-          filtered = filtered.where((p) => p.type.toLowerCase().contains('sc')).toList();
+          filtered = filtered.where((p) {
+            final type = p.type.toLowerCase();
+            return type.contains('sc') || type.contains('self contained') || type.contains('self-contained');
+          }).toList();
         } else {
           filtered = filtered.where((p) => p.type == _activeTypeFilter).toList();
         }
@@ -279,7 +230,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor(context),
-      body: Stack(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: Stack(
+
         children: [
           CustomScrollView(
             slivers: [
@@ -429,19 +384,33 @@ class _HomeScreenState extends State<HomeScreen> {
               else if (_filteredProperties.isEmpty)
                   SliverToBoxAdapter(child: _emptyState())
                 else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                          (context, index) => Padding(
-                        padding: responsivePadding(context, horizontal: 16, vertical: 12),
-                        child: _propertyCard(_filteredProperties[index]),
-                      ),
-                      childCount: _filteredProperties.length,
-                    ),
-                  ),
+                  Responsive.isMobile(context)
+                      ? SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) => Padding(
+                              padding: responsivePadding(context, horizontal: 16, vertical: 12),
+                              child: _propertyCard(_filteredProperties[index]),
+                            ),
+                            childCount: _filteredProperties.length,
+                          ),
+                        )
+                      : SliverPadding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          sliver: SliverGrid(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: Responsive.isDesktop(context) ? 3 : 2,
+                              childAspectRatio: 0.8,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                            ),
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) => _propertyCard(_filteredProperties[index]),
+                              childCount: _filteredProperties.length,
+                            ),
+                          ),
+                        ),
             ],
           ),
-          if (_showSelfContainedDropdown)
-            _selfContainedDropdownOverlay(),
           if (_showSelfContainedDropdown)
             Positioned.fill(
               child: GestureDetector(
@@ -449,9 +418,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 behavior: HitTestBehavior.translucent,
               ),
             ),
+          if (_showSelfContainedDropdown)
+            _selfContainedDropdownOverlay(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
+    ),
+  ),
+  bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         onTap: (i) {
           if (i == 1) Navigator.pushNamed(context, '/chat');
@@ -636,7 +609,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
-                  child: _buildPropertyImage(p),
+                  child: GestureDetector(
+                    onTap: () => _showImageGallery(p),
+                    behavior: HitTestBehavior.opaque,
+                    child: _buildPropertyImage(p),
+                  ),
                 ),
               ),
               _PropertyCardDetails(p: p),
@@ -649,19 +626,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildPropertyImage(Property p) {
     final imageUrl = p.displayImage;
 
-    print('🖼️ BUILDING IMAGE FOR: ${p.title}');
-    print('   displayImage: $imageUrl');
-    print('   Is Cloudinary: ${imageUrl?.contains('cloudinary.com') ?? false}');
-    print('   Is HTTP URL: ${imageUrl?.startsWith('http') ?? false}');
+    AppLogger.debug('🖼️ BUILDING IMAGE FOR: ${p.title}');
+    AppLogger.debug('   displayImage: $imageUrl');
+    AppLogger.debug('   Is Cloudinary: ${imageUrl?.contains('cloudinary.com') ?? false}');
+    AppLogger.debug('   Is HTTP URL: ${imageUrl?.startsWith('http') ?? false}');
 
     if (imageUrl != null && imageUrl.isNotEmpty) {
       // Test URL accessibility in background
       Future(() async {
         try {
           final response = await http.get(Uri.parse(imageUrl));
-          print('   ✅ URL test for "${p.title}": ${response.statusCode}');
+          AppLogger.debug('   ✅ URL test for "${p.title}": ${response.statusCode}');
         } catch (error) {
-          print('   ❌ URL test failed for "${p.title}": $error');
+          AppLogger.error('   ❌ URL test failed for "${p.title}": $error');
         }
       });
 
@@ -673,15 +650,15 @@ class _HomeScreenState extends State<HomeScreen> {
           child: const Center(child: CircularProgressIndicator()),
         ),
         errorWidget: (context, url, error) {
-          print('❌ IMAGE LOAD FAILED for "${p.title}": $url');
-          print('   Error type: ${error.runtimeType}');
-          print('   Error message: $error');
+          AppLogger.error('❌ IMAGE LOAD FAILED for "${p.title}": $url');
+          AppLogger.error('   Error type: ${error.runtimeType}');
+          AppLogger.error('   Error message: $error');
           return _buildPlaceholderImage();
         },
       );
     }
 
-    print('⚠️ No image URL for property: ${p.title}');
+    AppLogger.warning('⚠️ No image URL for property: ${p.title}');
     return _buildPlaceholderImage();
   }
 
@@ -698,9 +675,83 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _showImageGallery(Property property) {
+    final images = property.allImageUrls;
+    if (images.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No images available for this property'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FullScreenImageViewer(
+          imageUrls: images,
+          initialIndex: 0,
+        ),
+      ),
+    );
+  }
+
   void _showAdvancedFilterModal() {
     _minPriceController.text = _minPrice.toInt().toString();
     _maxPriceController.text = _maxPrice.toInt().toString();
+
+    if (Responsive.isDesktop(context)) {
+      showDialog(
+        context: context,
+        builder: (context) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500, maxHeight: 700),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppTheme.backgroundColor(context),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Set Your Preferences',
+                          style: TextStyle(
+                            fontSize: responsiveFontSize(context, 20),
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.textColor(context),
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.close_rounded, size: 22),
+                          onPressed: () => Navigator.pop(context),
+                          color: AppTheme.textSecondaryColor(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24),
+                      child: _buildFilterContent(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      return;
+    }
 
     showModalBottomSheet(
       context: context,
@@ -918,9 +969,9 @@ class _HomeScreenState extends State<HomeScreen> {
       "Single Room",
       "Chamber & Hall",
       "Single Room SC",
-      "2 Bedroom SC",
-      "3 Bedroom SC",
-      "4 Bedroom SC",
+      "Two Bedroom SC",
+      "Three Bedroom SC",
+      "Four Bedroom SC",
       "Furnitures",
       "Lands",
       "Shops",
@@ -1277,6 +1328,116 @@ class _PropertyCardDetails extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: color,
         ),
+      ),
+    );
+  }
+}
+
+// Full-screen image viewer for property gallery
+class FullScreenImageViewer extends StatefulWidget {
+  final List<String> imageUrls;
+  final int initialIndex;
+
+  const FullScreenImageViewer({
+    super.key,
+    required this.imageUrls,
+    this.initialIndex = 0,
+  });
+
+  @override
+  State<FullScreenImageViewer> createState() => _FullScreenImageViewerState();
+}
+
+class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
+  late final PageController _pageController;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: widget.imageUrls.length,
+            itemBuilder: (context, index) {
+              return InteractiveViewer(
+                panEnabled: true,
+                minScale: 0.5,
+                maxScale: 4,
+                child: CachedNetworkImage(
+                  imageUrl: widget.imageUrls[index],
+                  fit: BoxFit.contain,
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+                  errorWidget: (context, url, error) => Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.broken_image_rounded, color: Colors.white70, size: 60),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Failed to load image',
+                          style: TextStyle(color: Colors.white70, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+            onPageChanged: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+          ),
+          Positioned(
+            top: 40,
+            left: 10,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white, size: 30),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          if (widget.imageUrls.length > 1)
+            Positioned(
+              bottom: 20,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(widget.imageUrls.length, (index) {
+                  return Container(
+                    width: 8,
+                    height: 8,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _currentIndex == index
+                          ? AppTheme.primaryRed
+                          : Colors.white.withOpacity(0.5),
+                    ),
+                  );
+                }),
+              ),
+            ),
+        ],
       ),
     );
   }

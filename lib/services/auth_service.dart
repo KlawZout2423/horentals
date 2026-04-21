@@ -1,5 +1,7 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'graphql_service.dart';
+import '../utils/logger.dart';
+
 
 class AuthService {
   final GraphQLClient client;
@@ -40,7 +42,7 @@ class AuthService {
     String? email,
   }) async {
     try {
-      print('🔐 Attempting registration for: $name');
+      AppLogger.info('🔐 Attempting registration for: $name');
 
       // ✅ ADD TIMEOUT HERE
       final result = await client.mutate(
@@ -61,12 +63,12 @@ class AuthService {
       );
 
       if (result.hasException) {
-        print('❌ Registration mutation failed: ${result.exception}');
+        AppLogger.error('❌ Registration mutation failed: ${result.exception}');
 
         // Handle specific GraphQL errors
         if (result.exception?.graphqlErrors != null) {
           for (final error in result.exception!.graphqlErrors) {
-            print('   - GraphQL Error: ${error.message}');
+            AppLogger.error('   - GraphQL Error: ${error.message}');
             if (error.message.contains('already exists') || error.message.contains('P2002')) {
               throw Exception('Phone number already registered. Please try logging in.');
             }
@@ -90,10 +92,10 @@ class AuthService {
         );
       }
 
-      print('✅ Registration successful');
+      AppLogger.info('✅ Registration successful');
       return registerData;
     } catch (e) {
-      print('💥 Registration error: $e');
+      AppLogger.error('💥 Registration error: $e');
 
       // Handle timeout specifically
       if (e.toString().contains('timeout')) {
@@ -109,7 +111,7 @@ class AuthService {
     required String password,
   }) async {
     try {
-      print('🔄 Login attempt with email: $email');
+      AppLogger.info('🔄 Login attempt with email: $email');
 
       const String loginMutation = r'''
         mutation Login($email: String!, $password: String!) {
@@ -141,11 +143,11 @@ class AuthService {
       );
 
       if (result.hasException) {
-        print('❌ Login mutation failed: ${result.exception}');
+        AppLogger.error('❌ Login mutation failed: ${result.exception}');
 
         if (result.exception?.graphqlErrors != null) {
           for (final error in result.exception!.graphqlErrors) {
-            print('   - GraphQL Error: ${error.message}');
+            AppLogger.error('   - GraphQL Error: ${error.message}');
           }
           // Propagate the first specific GraphQL error message
           throw Exception(result.exception!.graphqlErrors.first.message.replaceAll('Unexpected error.', '').trim());
@@ -168,10 +170,10 @@ class AuthService {
         );
       }
 
-      print('✅ Login successful for user: ${loginData['user']['name']}');
+      AppLogger.info('✅ Login successful for user: ${loginData['user']['name']}');
       return loginData;
     } catch (e) {
-      print('🚨 Login error: $e');
+      AppLogger.error('🚨 Login error: $e');
 
       if (e.toString().contains('timeout')) {
         throw Exception('Connection timeout. Please check if your backend server is running.');
@@ -184,7 +186,7 @@ class AuthService {
   // Add logout method
   Future<void> logout() async {
     await GraphQLService.clearAuthData();
-    print('✅ Logout successful');
+    AppLogger.info('✅ Logout successful');
   }
 
   // Check if user is logged in

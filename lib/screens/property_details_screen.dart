@@ -4,30 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/property_model.dart';
 import '../themes.dart';
+import '../utils/responsive.dart';
 
-// Helper function to calculate responsive font size
-double responsiveFontSize(BuildContext context, double baseFontSize) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  // Adjust the base font size based on the screen width
-  if (screenWidth < 360) {
-    return baseFontSize * 0.8;
-  } else if (screenWidth < 400) {
-    return baseFontSize * 0.9;
-  }
-  return baseFontSize;
-}
 
-// Helper function to calculate responsive padding
-EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  // Adjust horizontal padding based on screen width
-  if (screenWidth < 360) {
-    return EdgeInsets.symmetric(horizontal: horizontal * 0.8, vertical: vertical);
-  } else if (screenWidth < 400) {
-    return EdgeInsets.symmetric(horizontal: horizontal * 0.9, vertical: vertical);
-  }
-  return EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical);
-}
+// Helper functions delegated to AppTheme
+double responsiveFontSize(BuildContext context, double baseFontSize) => AppTheme.responsiveFontSize(context, baseFontSize);
+EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) => AppTheme.responsivePadding(context, horizontal: horizontal, vertical: vertical);
 
 class PropertyDetailsScreen extends StatefulWidget {
   final Property property;
@@ -442,213 +424,290 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     );
   }
 
+  Widget _buildPropertyInfo(Property property) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                property.title,
+                style: TextStyle(
+                  fontSize: responsiveFontSize(context, 24),
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.textColor(context),
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryRed.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.primaryRed),
+              ),
+              child: Text(
+                (property.status ?? 'available').toUpperCase(),
+                style: TextStyle(
+                  fontSize: responsiveFontSize(context, 12),
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.primaryRed,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'GHC ${property.price} / month',
+          style: TextStyle(
+            fontSize: responsiveFontSize(context, 28),
+            fontWeight: FontWeight.w800,
+            color: AppTheme.primaryRed,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Icon(
+              Icons.location_on_rounded,
+              color: AppTheme.textSecondaryColor(context),
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              property.location,
+              style: TextStyle(
+                fontSize: responsiveFontSize(context, 16),
+                color: AppTheme.textSecondaryColor(context),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Icon(
+              Icons.category_rounded,
+              color: AppTheme.textSecondaryColor(context),
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              property.type,
+              style: TextStyle(
+                fontSize: responsiveFontSize(context, 16),
+                color: AppTheme.textSecondaryColor(context),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppTheme.cardColor(context),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Description',
+                style: TextStyle(
+                  fontSize: responsiveFontSize(context, 18),
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.textColor(context),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                (property.description?.isNotEmpty == true
+                    ? property.description!
+                    : 'A comfortable and well-maintained property located in ${property.location}. Perfect for students and professionals looking for quality accommodation.'),
+                style: TextStyle(
+                  fontSize: responsiveFontSize(context, 14),
+                  color: AppTheme.textSecondaryColor(context),
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final property = widget.property;
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor(context),
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            backgroundColor: AppTheme.cardColor(context),
-            elevation: 0,
-            pinned: true,
-            expandedHeight: 320,
-            flexibleSpace: FlexibleSpaceBar(
-              background: _buildImageGallery(),
-            ),
-            leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-              ),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SingleChildScrollView(
-              child: Padding(
-              padding: responsivePadding(context, horizontal: 24, vertical: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          property.title,
-                          style: TextStyle(
-                            fontSize: responsiveFontSize(context, 24),
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.textColor(context),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryRed.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppTheme.primaryRed),
-                        ),
-                        child: Text(
-                          (property.status ?? 'available').toUpperCase(),
-                          style: TextStyle(
-                            fontSize: responsiveFontSize(context, 12),
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.primaryRed,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'GHC ${property.price} / month',
-                    style: TextStyle(
-                      fontSize: responsiveFontSize(context, 28),
-                      fontWeight: FontWeight.w800,
-                      color: AppTheme.primaryRed,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_rounded,
-                        color: AppTheme.textSecondaryColor(context),
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        property.location,
-                        style: TextStyle(
-                          fontSize: responsiveFontSize(context, 16),
-                          color: AppTheme.textSecondaryColor(context),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.category_rounded,
-                        color: AppTheme.textSecondaryColor(context),
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        property.type,
-                        style: TextStyle(
-                          fontSize: responsiveFontSize(context, 16),
-                          color: AppTheme.textSecondaryColor(context),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppTheme.cardColor(context),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Description',
-                          style: TextStyle(
-                            fontSize: responsiveFontSize(context, 18),
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.textColor(context),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          (property.description?.isNotEmpty == true
-                              ? property.description!
-                              : 'A comfortable and well-maintained property located in ${property.location}. Perfect for students and professionals looking for quality accommodation.'),
-                          style: TextStyle(
-                            fontSize: responsiveFontSize(context, 14),
-                            color: AppTheme.textSecondaryColor(context),
-                            height: 1.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ),
-            ),
-          ),
-        ],
+      body: Responsive(
+        mobile: _buildMobileLayout(property),
+        desktop: _buildDesktopLayout(property),
       ),
-      bottomNavigationBar: Container(
-        padding: responsivePadding(context, horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppTheme.cardColor(context),
-          boxShadow: [
+      bottomNavigationBar: !Responsive.isDesktop(context) 
+          ? _buildBottomActions() 
+          : null,
+    );
+  }
+
+  Widget _buildMobileLayout(Property property) {
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          backgroundColor: AppTheme.cardColor(context),
+          elevation: 0,
+          pinned: true,
+          expandedHeight: 320,
+          flexibleSpace: FlexibleSpaceBar(
+            background: _buildImageGallery(),
+          ),
+          leading: IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: responsivePadding(context, horizontal: 24, vertical: 24),
+            child: _buildPropertyInfo(property),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopLayout(Property property) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1200),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left: Image Gallery
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back_rounded),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Back to Listings',
+                          style: TextStyle(
+                            color: AppTheme.textSecondaryColor(context),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: _buildImageGallery(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Right: Info and Actions
+            Expanded(
+              flex: 2,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  children: [
+                    _buildPropertyInfo(property),
+                    const SizedBox(height: 32),
+                    _buildBottomActions(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomActions() {
+    return Container(
+      padding: responsivePadding(context, horizontal: 24, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppTheme.cardColor(context),
+        boxShadow: [
+          if (!Responsive.isDesktop(context))
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () => _showContactOptions(),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppTheme.primaryRed,
-                  side: const BorderSide(color: AppTheme.primaryRed),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text('Contact Agent'),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: _isSaving ? null : _toggleFavorite,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _isSaved ? Colors.grey : AppTheme.primaryRed,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                icon: Icon(_isSaved ? Icons.check : Icons.save, color: Colors.white),
-                label: Text(
-                  _isSaved ? 'Saved' : 'Save',
-                  style: const TextStyle(color: Colors.white),
+        ],
+        borderRadius: Responsive.isDesktop(context) 
+            ? BorderRadius.circular(16) 
+            : null,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () => _showContactOptions(),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.primaryRed,
+                side: const BorderSide(color: AppTheme.primaryRed),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
+              child: const Text('Contact Agent'),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: _isSaving ? null : _toggleFavorite,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _isSaved ? Colors.grey : AppTheme.primaryRed,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              icon: Icon(_isSaved ? Icons.check : Icons.save, color: Colors.white),
+              label: Text(
+                _isSaved ? 'Saved' : 'Save',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

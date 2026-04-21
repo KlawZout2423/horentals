@@ -9,29 +9,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'saved_properties_screen.dart';
 
 
-// Helper function to calculate responsive font size
-double responsiveFontSize(BuildContext context, double baseFontSize) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  // Adjust the base font size based on the screen width
-  if (screenWidth < 360) {
-    return baseFontSize * 0.8;
-  } else if (screenWidth < 400) {
-    return baseFontSize * 0.9;
-  }
-  return baseFontSize;
-}
-
-// Helper function to calculate responsive padding
-EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  // Adjust horizontal padding based on screen width
-  if (screenWidth < 360) {
-    return EdgeInsets.symmetric(horizontal: horizontal * 0.8, vertical: vertical);
-  } else if (screenWidth < 400) {
-    return EdgeInsets.symmetric(horizontal: horizontal * 0.9, vertical: vertical);
-  }
-  return EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical);
-}
+// Helper functions delegated to AppTheme
+double responsiveFontSize(BuildContext context, double baseFontSize) => AppTheme.responsiveFontSize(context, baseFontSize);
+EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) => AppTheme.responsivePadding(context, horizontal: horizontal, vertical: vertical);
 
 class ProfileScreen extends StatefulWidget {
   final Function(bool) toggleTheme;
@@ -589,7 +569,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor(context),
-      body: CustomScrollView(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+
         slivers: [
           // Profile Header
           SliverAppBar(
@@ -963,7 +948,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-    );
+    ),
+  ),
+);
+
   }
 
   void _showHelpSupportDialog() {

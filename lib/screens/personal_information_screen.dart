@@ -3,30 +3,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import '../themes.dart';
 import '../services/auth_service.dart';
+import '../utils/logger.dart';
 
-// Helper function to calculate responsive font size
-double responsiveFontSize(BuildContext context, double baseFontSize) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  // Adjust the base font size based on the screen width
-  if (screenWidth < 360) {
-    return baseFontSize * 0.8;
-  } else if (screenWidth < 400) {
-    return baseFontSize * 0.9;
-  }
-  return baseFontSize;
-}
 
-// Helper function to calculate responsive padding
-EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  // Adjust horizontal padding based on screen width
-  if (screenWidth < 360) {
-    return EdgeInsets.symmetric(horizontal: horizontal * 0.8, vertical: vertical);
-  } else if (screenWidth < 400) {
-    return EdgeInsets.symmetric(horizontal: horizontal * 0.9, vertical: vertical);
-  }
-  return EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical);
-}
+// Helper functions delegated to AppTheme
+double responsiveFontSize(BuildContext context, double baseFontSize) => AppTheme.responsiveFontSize(context, baseFontSize);
+EdgeInsets responsivePadding(BuildContext context, {double horizontal = 24.0, double vertical = 0.0}) => AppTheme.responsivePadding(context, horizontal: horizontal, vertical: vertical);
 
 class PersonalInformationScreen extends StatefulWidget {
   final Map<String, dynamic>? userData;
@@ -193,7 +175,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
+          : Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
         padding: responsivePadding(context, horizontal: 16, vertical: 16),
         child: Column(
           children: [
@@ -210,7 +196,10 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
           ],
         ),
       ),
-    );
+      ),
+    ),
+  );
+
   }
 
   Widget _buildProfileHeader() {

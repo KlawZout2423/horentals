@@ -620,11 +620,14 @@ class _PropertyUploadScreenState extends State<PropertyUploadScreen> {
       ),
       body: _isUploading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
+          : Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: ListView(
             children: [
               // BASIC INFORMATION CARD
               _buildCardSection(
@@ -953,6 +956,8 @@ class _PropertyUploadScreenState extends State<PropertyUploadScreen> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 }

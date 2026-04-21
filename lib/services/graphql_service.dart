@@ -8,6 +8,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
+import '../utils/logger.dart';
+
 
 class GraphQLService {
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
@@ -22,7 +24,7 @@ class GraphQLService {
     List<PlatformFile>? webFiles,
   }) async {
     final url = '$_baseUrl/api/upload-multiple'; // Ensure backend matches
-    print('📤 Uploading images to: $url');
+    AppLogger.info('📤 Uploading images to: $url');
 
     var request = http.MultipartRequest('POST', Uri.parse(url));
 
@@ -72,7 +74,7 @@ class GraphQLService {
 
     final streamed = await request.send();
     final body = await streamed.stream.bytesToString();
-    print('📥 Upload response (${streamed.statusCode}): $body');
+    AppLogger.info('📥 Upload response (${streamed.statusCode}): $body');
 
     if (streamed.statusCode == 200) {
       final jsonResp = json.decode(body);
@@ -99,7 +101,7 @@ class GraphQLService {
       if (result == null) return null;
       return result.files;
     } catch (e) {
-      print('❌ pickFilesWeb error: $e');
+      AppLogger.error('❌ pickFilesWeb error: $e');
       return null;
     }
   }
@@ -150,7 +152,7 @@ class GraphQLService {
 
   static void validateGraphQLUrl() {
     final url = _graphqlUrl;
-    print('🔗 GraphQL URL: $url');
+    AppLogger.info('🔗 GraphQL URL: $url');
 
     if (!url.startsWith('http')) {
       throw Exception('Invalid GraphQL URL: Must start with http:// or https://');
@@ -161,31 +163,31 @@ class GraphQLService {
     }
 
     if (!url.endsWith('/graphql')) {
-      print('⚠️ Warning: GraphQL URL might be incorrect. Expected to end with /graphql');
+      AppLogger.warning('⚠️ Warning: GraphQL URL might be incorrect. Expected to end with /graphql');
     }
 
-    print('✅ GraphQL URL validation passed');
+    AppLogger.info('✅ GraphQL URL validation passed');
   }
 
   static Future<void> debugPropertyCreation() async {
-    print('🔍 DEBUG: Testing property creation flow');
+    AppLogger.debug('🔍 DEBUG: Testing property creation flow');
     try {
       final health = await http.get(Uri.parse('$_baseUrl/health'));
-      print('✅ Server health: ${health.statusCode}');
+      AppLogger.info('✅ Server health: ${health.statusCode}');
 
-      print('📤 Upload URL: $_baseUrl/api/upload-multiple');
+      AppLogger.info('📤 Upload URL: $_baseUrl/api/upload-multiple');
 
       final isLoggedIn = await GraphQLService.isLoggedIn();
-      print('🔐 Logged in: $isLoggedIn');
+      AppLogger.info('🔐 Logged in: $isLoggedIn');
 
       if (isLoggedIn) {
         final user = await GraphQLService.getCurrentUser();
-        print('👤 Current user: ${user?['name']}');
+        AppLogger.info('👤 Current user: ${user?['name']}');
       }
 
-      print('✅ Debug complete - System is ready!');
+      AppLogger.info('✅ Debug complete - System is ready!');
     } catch (e) {
-      print('❌ Debug error: $e');
+      AppLogger.error('❌ Debug error: $e');
     }
   }
 
@@ -194,20 +196,20 @@ class GraphQLService {
       try {
         final token = await _storage.read(key: 'auth_token');
         if (token == null) {
-          print('🔐 No auth token found');
+          AppLogger.info('🔐 No auth token found');
           return null;
         }
 
         if (!_isValidToken(token)) {
-          print('🔐 Invalid token format, clearing...');
+          AppLogger.warning('🔐 Invalid token format, clearing...');
           await clearAuthData();
           return null;
         }
 
-        print('🔐 Using token: ${token.substring(0, 20)}...');
+        AppLogger.info('🔐 Using token: ${token.substring(0, 20)}...');
         return 'Bearer $token';
       } catch (e) {
-        print('🔐 Error retrieving token: $e');
+        AppLogger.error('🔐 Error retrieving token: $e');
         await clearAuthData();
         return null;
       }
@@ -245,7 +247,7 @@ class GraphQLService {
     );
 
     _cachedClient = client;
-    print('✅ GraphQL Client initialized for $_graphqlUrl');
+    AppLogger.info('✅ GraphQL Client initialized for $_graphqlUrl');
     return ValueNotifier(client);
   }
 
@@ -258,7 +260,7 @@ class GraphQLService {
   }
 
   static Future<void> clearCacheAfterMutation() async {
-    print('🧹 Clearing cache after mutation...');
+    AppLogger.info('🧹 Clearing cache after mutation...');
     clearCachedClient();
     await Future.delayed(const Duration(milliseconds: 50));
   }
@@ -274,9 +276,9 @@ class GraphQLService {
 
       clearCachedClient();
 
-      print('🔐 Auth data stored successfully for user: ${user['name']}');
+      AppLogger.info('🔐 Auth data stored successfully for user: ${user['name']}');
     } catch (e) {
-      print('❌ Error storing auth data: $e');
+      AppLogger.error('❌ Error storing auth data: $e');
       rethrow;
     }
   }
@@ -286,15 +288,15 @@ class GraphQLService {
       await _storage.delete(key: 'auth_token');
       await _storage.delete(key: 'user_data');
       clearCachedClient();
-      print('🔐 Auth data cleared successfully');
+      AppLogger.info('🔐 Auth data cleared successfully');
     } catch (e) {
-      print('❌ Error clearing auth data: $e');
+      AppLogger.error('❌ Error clearing auth data: $e');
     }
   }
 
   static Future<void> clearAndResetAuth() async {
     await clearAuthData();
-    print('🔄 Auth system reset complete');
+    AppLogger.info('🔄 Auth system reset complete');
   }
 
   static Future<String> getCurrentUserId() async {
@@ -309,7 +311,7 @@ class GraphQLService {
       }
       throw Exception('User not authenticated or user data corrupted');
     } catch (e) {
-      print('❌ Error getting current user ID: $e');
+      AppLogger.error('❌ Error getting current user ID: $e');
       rethrow;
     }
   }
@@ -334,7 +336,7 @@ class GraphQLService {
       }
       return null;
     } catch (e) {
-      print('❌ Error parsing current user: $e');
+      AppLogger.error('❌ Error parsing current user: $e');
       await clearAuthData();
       return null;
     }
@@ -803,10 +805,10 @@ class GraphQLService {
       throw Exception('GraphQL error: ${result.exception}');
     }
 
-    print('✅ Property created successfully!');
+    AppLogger.info('✅ Property created successfully!');
     await clearCacheAfterMutation();
   } catch (e) {
-    print('❌ Create property failed: $e'); rethrow;}
+    AppLogger.error('❌ Create property failed: $e'); rethrow;}
   }
 
   static Future<void> updateProperty({
@@ -823,19 +825,19 @@ class GraphQLService {
     List<String>? existingImageUrls,
   }) async {
     try {
-      print('🔄 Updating property: $id');
+      AppLogger.info('🔄 Updating property: $id');
 
       List<String> finalImageUrls = [...?existingImageUrls];
 
       if (kIsWeb) {
         if (newWebFiles != null && newWebFiles.isNotEmpty) {
-          print('🌐 Uploading ${newWebFiles.length} web files...');
+          AppLogger.info('🌐 Uploading ${newWebFiles.length} web files...');
           final uploadedUrls = await uploadMultipleFilesGeneric(webFiles: newWebFiles);
           finalImageUrls.addAll(uploadedUrls);
         }
       } else {
         if (newImageFiles != null && newImageFiles.isNotEmpty) {
-          print('📱 Uploading ${newImageFiles.length} mobile files...');
+          AppLogger.info('📱 Uploading ${newImageFiles.length} mobile files...');
           final uploadedUrls = await uploadMultipleImages(newImageFiles);
           finalImageUrls.addAll(uploadedUrls);
         }
@@ -868,7 +870,7 @@ class GraphQLService {
         },
       };
 
-      print('📤 Sending GraphQL update mutation: $variables');
+      AppLogger.info('📤 Sending GraphQL update mutation: $variables');
 
       final client = getClient();
       final result = await client.mutate(
@@ -880,28 +882,28 @@ class GraphQLService {
       );
 
       if (result.hasException) {
-       print('❌ Update property error: ${result.exception}');
+       AppLogger.error('❌ Update property error: ${result.exception}');
        throw Exception('Failed to update property: ${result.exception}');
       }
 
-      print('✅ Property updated successfully');
+      AppLogger.info('✅ Property updated successfully');
 
       await clearCacheAfterMutation();
 
       return;
     } catch (e) {
-      print('💥 Update property failed: $e');
+      AppLogger.error('💥 Update property failed: $e');
       rethrow;
     }
   }
 
   static Future<void> testLogin() async {
     try {
-      print('🧪 Testing login with default admin...');
+      AppLogger.debug('🧪 Testing login with default admin...');
       final result = await login('0240000000@horentals.com', 'admin123');
-      print('✅ Test login successful: ${result['user']['name']}');
+      AppLogger.info('✅ Test login successful: ${result['user']['name']}');
     } catch (e) {
-      print('❌ Test login failed: $e');
+      AppLogger.error('❌ Test login failed: $e');
     }
   }
 
@@ -910,7 +912,7 @@ class GraphQLService {
     Function(String deletedId)? onSuccess,
   }) async {
     try {
-      print('🗑️ Deleting property: $id');
+      AppLogger.info('🗑️ Deleting property: $id');
 
       if (!await isLoggedIn()) throw Exception('Not authenticated');
 
@@ -925,18 +927,18 @@ class GraphQLService {
       );
 
       if (result.hasException) {
-        print('❌ Delete mutation failed: ${result.exception}');
+        AppLogger.error('❌ Delete mutation failed: ${result.exception}');
         throw Exception(result.exception.toString());
       }
 
       final deletedProperty = result.data?['deleteProperty'];
       if (deletedProperty == null) {
-        print('⚠️ Delete returned null or invalid response');
+        AppLogger.warning('⚠️ Delete returned null or invalid response');
         return false;
       }
 
       final deletedId = deletedProperty['id'].toString();
-      print('✅ Property deleted successfully: $deletedId');
+      AppLogger.info('✅ Property deleted successfully: $deletedId');
 
       await clearCacheAfterMutation();
 
@@ -946,7 +948,7 @@ class GraphQLService {
 
       return true;
     } catch (e) {
-      print('💥 Delete failed: $e');
+      AppLogger.error('💥 Delete failed: $e');
       return false;
     }
   }
@@ -957,7 +959,7 @@ class GraphQLService {
     Function(String updatedId, String newStatus)? onSuccess,
   }) async {
     try {
-      print('🔄 Updating property status: $id -> $status');
+      AppLogger.info('🔄 Updating property status: $id -> $status');
 
       if (!await isLoggedIn()) throw Exception('Not authenticated');
 
@@ -975,20 +977,20 @@ class GraphQLService {
       );
 
       if (result.hasException) {
-        print('❌ Update status failed: ${result.exception}');
+        AppLogger.error('❌ Update status failed: ${result.exception}');
         throw Exception(result.exception.toString());
       }
 
       final updatedProperty = result.data?['updatePropertyStatus'];
       if (updatedProperty == null || updatedProperty['id'] == null) {
-        print('⚠️ Update returned null or invalid response');
+        AppLogger.warning('⚠️ Update returned null or invalid response');
         return false;
       }
 
       final updatedId = updatedProperty['id'].toString();
       final newStatus = updatedProperty['status'].toString();
 
-      print('✅ Property status updated: $updatedId -> $newStatus');
+      AppLogger.info('✅ Property status updated: $updatedId -> $newStatus');
 
       if (onSuccess != null) {
         onSuccess(updatedId, newStatus);
@@ -998,7 +1000,7 @@ class GraphQLService {
 
       return true;
     } catch (e) {
-      print('💥 Update status exception: $e');
+      AppLogger.error('💥 Update status exception: $e');
       return false;
     }
   }
@@ -1022,7 +1024,7 @@ class GraphQLService {
         _cachedStats != null &&
         _statsCacheTime != null &&
         DateTime.now().difference(_statsCacheTime!).inSeconds < 30) {
-      print('📊 Using cached dashboard stats');
+      AppLogger.info('📊 Using cached dashboard stats');
       return _cachedStats!;
     }
 
@@ -1041,13 +1043,13 @@ class GraphQLService {
       _cachedStats = result.data?['dashboardStats'] ?? {};
       _statsCacheTime = DateTime.now();
 
-      print('📊 Fetched fresh dashboard stats');
+      AppLogger.info('📊 Fetched fresh dashboard stats');
       return _cachedStats!;
     } catch (e) {
-      print('❌ Error getting dashboard stats: $e');
+      AppLogger.error('❌ Error getting dashboard stats: $e');
 
       if (_cachedStats != null) {
-        print('📊 Using stale cached stats as fallback');
+        AppLogger.info('📊 Using stale cached stats as fallback');
         return _cachedStats!;
       }
 
@@ -1058,7 +1060,7 @@ class GraphQLService {
   static void invalidateStatsCache() {
     _cachedStats = null;
     _statsCacheTime = null;
-    print('🧹 Dashboard stats cache cleared');
+    AppLogger.info('🧹 Dashboard stats cache cleared');
   }
 
   static Future<List<dynamic>> getProperties() async {
@@ -1072,15 +1074,15 @@ class GraphQLService {
       ).timeout(const Duration(seconds: 15));
 
       if (result.hasException) {
-        print('❌ Get properties error: ${result.exception}');
+        AppLogger.error('❌ Get properties error: ${result.exception}');
         throw Exception('Failed to fetch properties: ${result.exception}');
       }
 
       final properties = result.data?['properties'] ?? [];
-      print('✅ Fetched ${properties.length} properties FROM NETWORK');
+      AppLogger.info('✅ Fetched ${properties.length} properties FROM NETWORK');
       return properties;
     } catch (e) {
-      print('❌ Get properties error: $e');
+      AppLogger.error('❌ Get properties error: $e');
       rethrow;
     }
   }
@@ -1096,35 +1098,35 @@ class GraphQLService {
       ).timeout(const Duration(seconds: 15));
 
       if (result.hasException) {
-        print('❌ Get users error: ${result.exception}');
+        AppLogger.error('❌ Get users error: ${result.exception}');
         throw Exception('Failed to fetch users: ${result.exception}');
       }
 
       final users = result.data?['users'] ?? [];
-      print('✅ Fetched ${users.length} users FROM NETWORK');
+      AppLogger.info('✅ Fetched ${users.length} users FROM NETWORK');
       return users;
     } catch (e) {
-      print('❌ Get users error: $e');
+      AppLogger.error('❌ Get users error: $e');
       rethrow;
     }
   }
 
   static Future<void> forceRefreshProperties() async {
-    print('🔄 Force refreshing properties cache...');
+    AppLogger.info('🔄 Force refreshing properties cache...');
     clearCachedClient();
   }
 
   static Future<void> testImageUpload() async {
-    print('🧪 Testing image upload system...');
+    AppLogger.debug('🧪 Testing image upload system...');
 
     try {
       final response = await http.get(Uri.parse('$_baseUrl/health'));
-      print('🌐 Server health: ${response.statusCode}');
+      AppLogger.info('🌐 Server health: ${response.statusCode}');
 
-      print('📤 Upload endpoint: $_baseUrl/api/upload');
-      print('✅ Image upload system ready!');
+      AppLogger.info('📤 Upload endpoint: $_baseUrl/api/upload');
+      AppLogger.info('✅ Image upload system ready!');
     } catch (e) {
-      print('⚠️ Test failed (might be normal): $e');
+      AppLogger.warning('⚠️ Test failed (might be normal): $e');
     }
   }
 }
