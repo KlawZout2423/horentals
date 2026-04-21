@@ -18,12 +18,12 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Premium real estate management and property rentals in Ho, Ghana.">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="untitled">
+  <meta name="apple-mobile-web-app-title" content="HO Rentals">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
@@ -79,22 +79,16 @@
     <div style="color: #444; font-weight: 500; font-size: 18px;">HO Rentals</div>
     <div style="color: #888; font-size: 14px; margin-top: 5px;">Modern Real Estate Management</div>
   </div>
+  <script src="flutter_bootstrap.js" async></script>
   <script>
-    window.addEventListener('load', function(ev) {
-      // Wait for engine to be ready
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          fingerprint: true,
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            // Hide loading indicator
-            document.getElementById('loading-indicator').style.display = 'none';
-            appRunner.runApp();
-          });
-        }
-      });
-    });
+    // Fallback to hide loading indicator if something goes wrong
+    setTimeout(function() {
+      var indicator = document.getElementById('loading-indicator');
+      if (indicator) {
+        indicator.style.opacity = '0';
+        setTimeout(function() { indicator.style.display = 'none'; }, 500);
+      }
+    }, 10000); // 10 seconds safety timeout
   </script>
 </body>
 </html>
