@@ -32,6 +32,14 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.0
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0
+
+flutter_native_splash:
+  color: "#C1121F"
+  image: assets/logo.png
+  android: true
+  ios: true
+  web: false
 
 flutter_icons:
   android: true
@@ -43,6 +51,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/logo.jpg
     - assets/logo.png
-    - assets/splash_image.jpg

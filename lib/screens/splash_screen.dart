@@ -22,23 +22,19 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Fullscreen image
-          SizedBox.expand(
-            child: Image.asset(
-              'assets/splash_image.jpg',
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Center(
-                  child: Text(
-                    'HO Rentals',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                );
-              },
+          // Red background with centered logo
+          Container(
+            color: AppTheme.primaryRed,
+            child: Center(
+              child: Hero(
+                tag: 'logo',
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
           ),
           // Small loading indicator at the bottom center

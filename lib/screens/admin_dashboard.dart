@@ -111,7 +111,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 image: const DecorationImage(
-                  image: AssetImage('assets/splash_image.jpg'),
+                  image: AssetImage('assets/logo.png'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -285,7 +285,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 borderRadius: BorderRadius.circular(10),
                 color: Colors.white,
                 image: const DecorationImage(
-                  image: AssetImage('assets/splash_image.jpg'),
+                  image: AssetImage('assets/logo.png'),
                   fit: BoxFit.cover,
                 ),
               ),
