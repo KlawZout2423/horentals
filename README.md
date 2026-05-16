@@ -1,16 +1,16 @@
-# untitled
+# HO Rentals
 
-A new Flutter project.
+A modern home rental platform designed specifically for students to find quality hostels, single rooms, self-contained apartments, and more.
+
+## Features
+- **Property Listings**: Browse a variety of accommodations with detailed descriptions and images.
+- **Advanced Filtering**: Filter by property type, price range, and self-contained options.
+- **Modern UI**: An intuitive, visually pleasing interface built with Flutter.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To run this project:
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Ensure you have Flutter installed (SDK version `^3.9.2`).
+2. Run `flutter pub get` to install dependencies.
+3. Run `flutter run` to start the app.

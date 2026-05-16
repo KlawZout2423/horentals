@@ -8,6 +8,7 @@ import '../models/property_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_animate/flutter_animate.dart';
 import '../utils/logger.dart';
 import '../utils/responsive.dart';
 
@@ -320,7 +321,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: responsivePadding(context, horizontal: 20, vertical: 20),
                     decoration: BoxDecoration(
                         gradient: AppTheme.primaryGradient,
-                        borderRadius: const BorderRadius.all(Radius.circular(16))
+                        borderRadius: const BorderRadius.all(Radius.circular(24)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryRed.withOpacity(0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -540,7 +548,7 @@ class _HomeScreenState extends State<HomeScreen> {
               )),
         ]),
       ),
-    );
+    ).animate().fade(duration: 300.ms).scale(duration: 300.ms);
   }
 
   Widget _selfContainedDropdownOverlay() {
@@ -589,7 +597,7 @@ class _HomeScreenState extends State<HomeScreen> {
       const SizedBox(height: 8),
       const Text('Try adjusting your filters', style: TextStyle(color: Colors.grey)),
     ]),
-  );
+  ).animate().fade(duration: 500.ms).scaleXY(begin: 0.9, end: 1.0, duration: 500.ms);
 
   Widget _propertyCard(Property p) {
     return GestureDetector(
@@ -600,19 +608,29 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         decoration: BoxDecoration(
             color: AppTheme.cardColor(context),
-            borderRadius: BorderRadius.circular(16)
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
         ),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
                   child: GestureDetector(
                     onTap: () => _showImageGallery(p),
                     behavior: HitTestBehavior.opaque,
-                    child: _buildPropertyImage(p),
+                    child: Hero(
+                      tag: 'property_image_${p.id}',
+                      child: _buildPropertyImage(p),
+                    ),
                   ),
                 ),
               ),
@@ -620,7 +638,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ]
         ),
       ),
-    );
+    ).animate().fade(duration: 400.ms).slideY(begin: 0.1, end: 0, duration: 400.ms);
   }
 
   Widget _buildPropertyImage(Property p) {

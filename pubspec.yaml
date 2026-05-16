@@ -1,5 +1,5 @@
-name: untitled
-description: "A new Flutter project."
+name: ho_rentals
+description: "A modern home rental platform for students."
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -26,6 +26,7 @@ dependencies:
   http_parser: ^4.0.2  # For multipart file uploads
   mime: ^1.0.4          # For detecting file MIME types
   cached_network_image: ^3.2.3
+  flutter_animate: ^4.5.2
 
 dev_dependencies:
   flutter_test:

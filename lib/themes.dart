@@ -5,20 +5,20 @@ class AppTheme {
   static const Color primaryRed = Color(0xFFC1121F);
   static const Color redLight = Color(0xFFFFF3F3);
   static const Color redDark = Color(0xFF780B13);
-  static const Color gold = Color(0xFFD69E2E);
-  static const Color goldLight = Color(0xFFFAF3E3);
+  static const Color gold = Color(0xFFF59E0B);
+  static const Color goldLight = Color(0xFFFEF3C7);
 
   // Light Mode
-  static const Color lightBackground = Color(0xFFF7FAFC);
+  static const Color lightBackground = Color(0xFFF8FAFC);
   static const Color lightCard = Color(0xFFFFFFFF);
-  static const Color lightText = Color(0xFF2D3748);
-  static const Color lightTextSecondary = Color(0xFF4A5568);
+  static const Color lightText = Color(0xFF0F172A);
+  static const Color lightTextSecondary = Color(0xFF64748B);
 
   // Dark Mode Colors
-  static const Color darkBackground = Color(0xFF1E1E1E);
-  static const Color darkCard = Color(0xFF2D3748);
-  static const Color darkText = Color(0xFFFFFFFF);
-  static const Color darkTextSecondary = Color(0xFFE2E8F0);
+  static const Color darkBackground = Color(0xFF0F172A);
+  static const Color darkCard = Color(0xFF1E293B);
+  static const Color darkText = Color(0xFFF8FAFC);
+  static const Color darkTextSecondary = Color(0xFF94A3B8);
 
   // Gradients
   static Gradient get primaryGradient {
@@ -96,9 +96,9 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         color: lightCard,
-        elevation: 2,
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
       useMaterial3: true,
@@ -118,9 +118,9 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         color: darkCard,
-        elevation: 2,
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
       useMaterial3: true,

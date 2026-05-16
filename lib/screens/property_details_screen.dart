@@ -364,38 +364,12 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: CachedNetworkImage(
-                    imageUrl: images[index],
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      color: AppTheme.primaryRed.withOpacity(0.1),
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      color: AppTheme.primaryRed.withOpacity(0.1),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.broken_image_rounded,
-                              color: AppTheme.primaryRed.withOpacity(0.5),
-                              size: 60,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Failed to load image',
-                              style: TextStyle(
-                                color: AppTheme.textSecondaryColor(context),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  child: index == 0 
+                    ? Hero(
+                        tag: 'property_image_${widget.property.id}',
+                        child: _buildNetworkImage(images[index], context),
+                      )
+                    : _buildNetworkImage(images[index], context),
                 ),
               );
             },
@@ -421,6 +395,41 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             }),
           ),
       ],
+    );
+  }
+
+  Widget _buildNetworkImage(String url, BuildContext context) {
+    return CachedNetworkImage(
+      imageUrl: url,
+      fit: BoxFit.cover,
+      placeholder: (context, url) => Container(
+        color: AppTheme.primaryRed.withOpacity(0.1),
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      errorWidget: (context, url, error) => Container(
+        color: AppTheme.primaryRed.withOpacity(0.1),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.broken_image_rounded,
+                color: AppTheme.primaryRed.withOpacity(0.5),
+                size: 60,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Failed to load image',
+                style: TextStyle(
+                  color: AppTheme.textSecondaryColor(context),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

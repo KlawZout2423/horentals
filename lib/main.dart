@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'screens/admin_dashboard.dart';
@@ -25,7 +26,9 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 void main() async {
-  HttpOverrides.global = MyHttpOverrides(); // ← Add this line
+  if (kDebugMode) {
+    HttpOverrides.global = MyHttpOverrides(); // Only in debug mode
+  }
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Hive for caching
